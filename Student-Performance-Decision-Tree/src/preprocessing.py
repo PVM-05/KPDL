@@ -1,6 +1,7 @@
 """
 Module: preprocessing.py
-Nhiệm vụ: Tiền xử lý dữ liệu hồ sơ sinh viên HaUI, xác định nhãn học lực và chia tập huấn luyện/kiểm thử.
+Nhiệm vụ: Tiền xử lý dữ liệu hồ sơ sinh viên, xác định nhãn học lực và chia tập huấn luyện/kiểm thử.
+Thiết kế tập trung 100% vào Kịch bản Dự đoán sớm Năm 1 nhằm ngăn chặn triệt để rò rỉ nhãn (Zero Label Leakage).
 """
 
 from typing import Tuple, List, Optional
@@ -20,17 +21,15 @@ def create_target(df: pd.DataFrame, threshold: float = 2.50) -> pd.Series:
 def clean_course_grades(df: pd.DataFrame, df_dict: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """
     Điền giá trị 0 cho các ô điểm khuyết thiếu (NaN) trong các môn học.
-    Theo ghi chú kỹ thuật của bộ dữ liệu HaUI, giá trị 0 đại diện cho việc môn học
+    Theo quy chuẩn mã hóa dữ liệu học vụ, giá trị 0 đại diện cho việc môn học
     chưa được tích lũy hoặc sinh viên vắng thi/bị điểm F.
     """
     df_clean = df.copy()
     
-    # Xác định danh sách các cột môn học
     if df_dict is not None and not df_dict.empty and "Readable meaning" in df_dict.columns:
         course_cols = df_dict[df_dict["Category"] == "Harmonized course-grade variable"]["Readable meaning"].tolist()
         course_cols = [c for c in course_cols if c in df_clean.columns]
     else:
-        # Nhận diện tự động các cột không phải metadata
         exclude_cols = ["BirthPlace", "Sex", "GPA", "ScholarshipRecipientsCount", "DisciplineForm", "DisciplineTypeName"]
         course_cols = [c for c in df_clean.columns if c not in exclude_cols]
         
@@ -46,25 +45,27 @@ def prepare_features(
     scenario: str = "early"
 ) -> Tuple[pd.DataFrame, pd.Series]:
     """
-    Chuẩn bị ma trận đặc trưng X và nhãn mục tiêu y theo 2 kịch bản thực nghiệm:
+    Chuẩn bị ma trận đặc trưng X và nhãn mục tiêu y.
     
-    1. scenario="early" (Dự đoán sớm - Early Prediction):
-       Chỉ sử dụng 15 môn học của Năm thứ nhất (Học kỳ 1 & 2) để phát hiện sớm
-       xu hướng học tập của sinh viên ngay sau năm 1.
-       
-    2. scenario="full" (Toàn khóa học - Full Profile):
-       Sử dụng toàn bộ 50 môn học kết hợp với chỉ số Số lần nhận học bổng.
+    Kịch bản chính: scenario="early" (Dự đoán sớm sau Năm thứ nhất - Early Prediction):
+    - Chỉ sử dụng 15 môn học của Năm 1 (Học kỳ 1 & 2) để phát hiện sớm xu hướng học tập
+      của sinh viên ngay sau năm nhất, hỗ trợ cố vấn học tập trước khi quá muộn.
+    - Bảo đảm tuyệt đối Zero Data Leakage: Tại thời điểm này, sinh viên hoàn toàn chưa có
+      điểm của 35 môn học ở các năm tiếp theo.
+      
+    Lưu ý phương pháp luận:
+    - Điểm GPA toàn khóa được tính trung bình gia quyền từ tất cả 50 môn học. Nếu sử dụng điểm
+      của toàn bộ khóa học để dự đoán chính GPA đó thì bài toán sẽ bị rò rỉ nhãn (Label Leakage).
+      Do đó, kịch bản Dự đoán sớm Năm 1 là bài toán khoa học và có giá trị thực tiễn duy nhất.
     """
     df_clean = clean_course_grades(df, df_dict)
     y = create_target(df_clean, threshold=2.50)
     
-    # Lấy danh sách môn học Năm 1 từ từ điển nếu có
     if scenario == "early":
         if df_dict is not None and not df_dict.empty and "Semester suffix" in df_dict.columns:
             sem1_2_vars = df_dict[df_dict["Semester suffix"].isin([1.0, 2.0])]["Readable meaning"].tolist()
             selected_features = [c for c in sem1_2_vars if c in df_clean.columns]
         else:
-            # Fallback danh sách 15 môn Năm 1 chuẩn của HaUI
             selected_features = [
                 "Theoretical Mechanics", "National Defense and Security Education",
                 "Descriptive Geometry", "General Chemistry", "English 1",
@@ -75,7 +76,7 @@ def prepare_features(
             ]
             selected_features = [c for c in selected_features if c in df_clean.columns]
     else:
-        # Kịch bản full: lấy tất cả các môn học và số lần nhận học bổng
+        # Kịch bản khảo sát bổ trợ
         exclude = ["BirthPlace", "Sex", "GPA", "DisciplineForm", "DisciplineTypeName"]
         selected_features = [c for c in df_clean.columns if c not in exclude]
 
@@ -90,7 +91,7 @@ def split_data(
     random_state: int = 42
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
-    Phân chia dữ liệu thành tập Huấn luyện (Train 80%) và Kiểm thử (Test 20%) 
+    Phân chia dữ liệu thành tập Huấn luyện (Train 80%) và Kiểm thử độc lập (Test 20%) 
     có phân tầng (stratify=y) để bảo toàn tỷ lệ Khá-Giỏi / Trung bình-Yếu.
     """
     return train_test_split(

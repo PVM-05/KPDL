@@ -1,6 +1,7 @@
 """
 Module: evaluate_model.py
-Nhiệm vụ: Đánh giá mô hình Decision Tree trên dữ liệu sinh viên HaUI và xuất 5 biểu đồ báo cáo.
+Nhiệm vụ: Đánh giá mô hình Decision Tree trên dữ liệu sinh viên và xuất 5 biểu đồ báo cáo.
+Tích hợp phân tích lỗi cận biên định lượng (Near-Threshold Error Analysis).
 """
 
 import os
@@ -47,7 +48,7 @@ def calculate_metrics(y_true, y_pred) -> Dict[str, float]:
 
 def plot_class_distribution(df: pd.DataFrame, output_path: str):
     """
-    Biểu đồ 1: Phân bố xếp loại học lực của 1.656 sinh viên Đại học Công nghiệp Hà Nội.
+    Biểu đồ 1: Phân bố xếp loại học lực của 1.656 sinh viên.
     """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     pass_count = (df["GPA"] >= 2.50).sum()
@@ -72,7 +73,7 @@ def plot_class_distribution(df: pd.DataFrame, output_path: str):
             ha="center", va="bottom", fontsize=10.5, fontweight="bold"
         )
         
-    ax.set_title("Phân Bố Xếp Loại Học Lực Sinh Viên HaUI (N = 1.656)", fontsize=13, fontweight="bold", pad=15)
+    ax.set_title("Phân Bố Xếp Loại Học Lực Sinh Viên (N = 1.656)", fontsize=13, fontweight="bold", pad=15)
     ax.set_ylabel("Số lượng sinh viên", fontsize=11)
     ax.set_ylim(0, total * 0.70)
     plt.tight_layout()
@@ -82,20 +83,20 @@ def plot_class_distribution(df: pd.DataFrame, output_path: str):
 
 def plot_correlation_heatmap(df: pd.DataFrame, output_path: str):
     """
-    Biểu đồ 2: Ma trận tương quan giữa GPA, Học bổng và các môn học nền tảng.
+    Biểu đồ 2: Ma trận tương quan giữa GPA và các môn học nền tảng Năm 1.
     """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     key_cols = [
-        "GPA", "ScholarshipRecipientsCount",
+        "GPA",
         "Advanced Mathematics 1 (Calculus I)", "Advanced Mathematics 2 (Calculus II)",
         "Physics 1", "Theoretical Mechanics", "Strength of Materials",
-        "Automotive Electrical and Electronics", "English 1", "English 2"
+        "Automotive Electrical and Electronics", "Materials Science",
+        "English 1", "English 2"
     ]
     cols_present = [c for c in key_cols if c in df.columns]
     
     corr = df[cols_present].corr()
     
-    # Rút gọn tên hiển thị để biểu đồ gọn gàng
     short_names = {
         "Advanced Mathematics 1 (Calculus I)": "Toán 1 (Giải tích 1)",
         "Advanced Mathematics 2 (Calculus II)": "Toán 2 (Giải tích 2)",
@@ -103,7 +104,7 @@ def plot_correlation_heatmap(df: pd.DataFrame, output_path: str):
         "Theoretical Mechanics": "Cơ lý thuyết",
         "Strength of Materials": "Sức bền vật liệu",
         "Automotive Electrical and Electronics": "Điện - Điện tử ô tô",
-        "ScholarshipRecipientsCount": "Số kỳ Học bổng",
+        "Materials Science": "Vật liệu học",
         "English 1": "Tiếng Anh 1",
         "English 2": "Tiếng Anh 2"
     }
@@ -120,7 +121,7 @@ def plot_correlation_heatmap(df: pd.DataFrame, output_path: str):
         square=True,
         cbar_kws={"shrink": 0.8}
     )
-    plt.title("Ma Trận Tương Quan Giữa GPA Và Các Môn Học Nền Tảng", fontsize=13, fontweight="bold", pad=15)
+    plt.title("Ma Trận Tương Quan Giữa GPA Và Các Môn Học Năm 1", fontsize=13, fontweight="bold", pad=15)
     plt.xticks(rotation=45, ha="right", fontsize=9.5)
     plt.yticks(fontsize=9.5)
     plt.tight_layout()
@@ -138,7 +139,6 @@ def plot_decision_tree_graph(
     """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
-    # Rút gọn tên biến cho cây dễ đọc
     clean_feature_names = [
         f.replace("Advanced Mathematics 1 (Calculus I)", "Toán 1 (Giải tích 1)")
          .replace("Automotive Electrical and Electronics", "Điện - ĐT ô tô")
@@ -148,10 +148,12 @@ def plot_decision_tree_graph(
          .replace("English 2", "Tiếng Anh 2")
          .replace("English 1", "Tiếng Anh 1")
          .replace("Engineering Thermodynamics", "Nhiệt KT")
-         .replace("ScholarshipRecipientsCount", "Số kỳ học bổng")
-         .replace("Capstone Project / Graduation Thesis", "Đồ án tốt nghiệp")
-         .replace("Workshop Design", "Thiết kế xưởng")
-         .replace("Automotive Engine Theory", "Lý thuyết ĐC")
+         .replace("Advanced Mathematics 2 (Calculus II)", "Toán 2 (Giải tích 2)")
+         .replace("National Defense and Security Education", "GD Quốc phòng")
+         .replace("Descriptive Geometry", "Hình họa")
+         .replace("General Chemistry", "Hóa đại cương")
+         .replace("Theory of Machines", "Nguyên lý máy")
+         .replace("Engineering Drawing", "Vẽ kỹ thuật")
         for f in feature_names
     ]
     
@@ -166,7 +168,7 @@ def plot_decision_tree_graph(
         ax=ax,
         precision=2
     )
-    ax.set_title("Cấu Trúc Cây Quyết Định Dự Đoán Kết Quả Học Tập Sinh Viên HaUI", fontsize=14, fontweight="bold", pad=15)
+    ax.set_title("Cấu Trúc Cây Quyết Định Dự Đoán Sớm Kết Quả Học Tập", fontsize=14, fontweight="bold", pad=15)
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
@@ -212,8 +214,20 @@ def plot_feature_importance_bar(
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     importances = model.feature_importances_
     
+    clean_names = [
+        f.replace("Automotive Electrical and Electronics", "Điện - Điện tử ô tô")
+         .replace("Materials Science", "Vật liệu học")
+         .replace("English 2", "Tiếng Anh 2")
+         .replace("Engineering Thermodynamics", "Nhiệt kỹ thuật")
+         .replace("English 1", "Tiếng Anh 1")
+         .replace("Theoretical Mechanics", "Cơ lý thuyết")
+         .replace("Advanced Mathematics 1 (Calculus I)", "Toán 1 (Giải tích 1)")
+         .replace("Strength of Materials", "Sức bền vật liệu")
+        for f in feature_names
+    ]
+    
     df_imp = pd.DataFrame({
-        "feature": feature_names,
+        "feature": clean_names,
         "importance": importances
     }).sort_values("importance", ascending=False).reset_index(drop=True)
     
@@ -228,7 +242,7 @@ def plot_feature_importance_bar(
             plt.text(w + 0.005, bar.get_y() + bar.get_height() / 2, f"{w:.3f}", 
                      va="center", ha="left", fontsize=9.5, fontweight="bold")
             
-    plt.title(f"Top {top_n} Môn Học & Đặc Trưng Quan Trọng Nhất (Gini Importance)", fontsize=13, fontweight="bold", pad=15)
+    plt.title(f"Top {top_n} Môn Học Năm 1 Có Ảnh Hưởng Lớn Nhất (Gini Importance)", fontsize=13, fontweight="bold", pad=15)
     plt.xlabel("Trọng số phân tách (Feature Importance)", fontsize=11)
     plt.xlim(0, max(top_df["importance"].max() * 1.15, 0.1))
     plt.tight_layout()
@@ -238,14 +252,15 @@ def plot_feature_importance_bar(
     return df_imp
 
 
-def find_misclassifications(
+def analyze_errors_quantitatively(
     model: DecisionTreeClassifier, 
     X_test: pd.DataFrame, 
     y_test: pd.Series,
     original_df: pd.DataFrame
-) -> pd.DataFrame:
+) -> Dict[str, Any]:
     """
-    Trích xuất các trường hợp dự đoán sai để phân tích nguyên nhân lỗi.
+    Phân tích định lượng các trường hợp dự đoán sai:
+    Tính toán phân vị GPA của các ca FP và FN để chứng minh giả thuyết vùng cận biên (Near-Threshold).
     """
     y_pred = model.predict(X_test)
     test_indices = X_test.index
@@ -258,4 +273,44 @@ def find_misclassifications(
     df_errors["Actual_Label"] = y_test.loc[mis_indices].values
     df_errors["Predicted_Label"] = y_pred[mis_mask]
     
-    return df_errors
+    total_errors = len(df_errors)
+    total_test = len(X_test)
+    error_rate = round(float(total_errors / total_test * 100), 2)
+    
+    fp_mask = (df_errors["Actual_Label"] == 0) & (df_errors["Predicted_Label"] == 1)
+    fn_mask = (df_errors["Actual_Label"] == 1) & (df_errors["Predicted_Label"] == 0)
+    
+    df_fp = df_errors[fp_mask]
+    df_fn = df_errors[fn_mask]
+    
+    fp_count = int(len(df_fp))
+    fn_count = int(len(df_fn))
+    
+    # Số ca FP có GPA >= 2.30 (sát ngưỡng 2.50)
+    fp_near_threshold = int((df_fp["Actual_GPA"] >= 2.30).sum()) if fp_count > 0 else 0
+    fp_near_pct = round(float(fp_near_threshold / fp_count * 100), 2) if fp_count > 0 else 0.0
+    
+    # Số ca FN có GPA < 2.70 (sát ngưỡng 2.50)
+    fn_near_threshold = int((df_fn["Actual_GPA"] < 2.70).sum()) if fn_count > 0 else 0
+    fn_near_pct = round(float(fn_near_threshold / fn_count * 100), 2) if fn_count > 0 else 0.0
+    
+    # Tổng số ca sai trong vùng cận biên [2.30, 2.70)
+    total_near_threshold = fp_near_threshold + fn_near_threshold
+    near_threshold_pct = round(float(total_near_threshold / total_errors * 100), 2) if total_errors > 0 else 0.0
+    
+    return {
+        "total_errors": total_errors,
+        "error_rate": error_rate,
+        "false_positives": fp_count,
+        "false_negatives": fn_count,
+        "fp_gpa_mean": round(float(df_fp["Actual_GPA"].mean()), 3) if fp_count > 0 else 0.0,
+        "fp_gpa_median": round(float(df_fp["Actual_GPA"].median()), 3) if fp_count > 0 else 0.0,
+        "fp_near_threshold": fp_near_threshold,
+        "fp_near_pct": fp_near_pct,
+        "fn_gpa_mean": round(float(df_fn["Actual_GPA"].mean()), 3) if fn_count > 0 else 0.0,
+        "fn_gpa_median": round(float(df_fn["Actual_GPA"].median()), 3) if fn_count > 0 else 0.0,
+        "fn_near_threshold": fn_near_threshold,
+        "fn_near_pct": fn_near_pct,
+        "total_near_threshold": total_near_threshold,
+        "near_threshold_pct": near_threshold_pct,
+    }

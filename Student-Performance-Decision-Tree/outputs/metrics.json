@@ -1,5 +1,5 @@
 {
-    "dataset_name": "Hồ sơ học tập sinh viên đại học — Đại học Công nghiệp Hà Nội (HaUI)",
+    "dataset_name": "Hồ sơ học tập sinh viên đại học (Anonymized Academic Benchmark)",
     "summary": {
         "n_students": 1656,
         "n_features": 56,
@@ -40,65 +40,67 @@
         "fn": 45,
         "tp": 114
     },
-    "scenario_full_decision_tree": {
-        "accuracy": 0.8433734939759037,
-        "precision_pass": 0.928,
-        "recall_pass": 0.7295597484276729,
-        "f1_pass": 0.8169014084507042,
-        "precision_fail": 0.7922705314009661,
-        "recall_fail": 0.9479768786127167,
-        "f1_fail": 0.8631578947368421,
-        "macro_f1": 0.8400296515937732,
-        "tn": 164,
-        "fp": 9,
-        "fn": 43,
-        "tp": 116
-    },
-    "depth_tuning": [
+    "depth_tuning_cv": [
         {
             "max_depth": 1,
+            "cv_mean_accuracy": 0.6367,
+            "cv_std_accuracy": 0.041,
             "train_accuracy": 0.6669,
             "test_accuracy": 0.6867,
             "generalization_gap": -0.0198
         },
         {
             "max_depth": 2,
+            "cv_mean_accuracy": 0.6624,
+            "cv_std_accuracy": 0.0169,
             "train_accuracy": 0.6858,
             "test_accuracy": 0.6867,
             "generalization_gap": -0.0009
         },
         {
             "max_depth": 3,
+            "cv_mean_accuracy": 0.7243,
+            "cv_std_accuracy": 0.013,
             "train_accuracy": 0.7492,
             "test_accuracy": 0.7139,
             "generalization_gap": 0.0354
         },
         {
             "max_depth": 4,
+            "cv_mean_accuracy": 0.7364,
+            "cv_std_accuracy": 0.0221,
             "train_accuracy": 0.7613,
             "test_accuracy": 0.744,
             "generalization_gap": 0.0174
         },
         {
             "max_depth": 5,
+            "cv_mean_accuracy": 0.716,
+            "cv_std_accuracy": 0.02,
             "train_accuracy": 0.7779,
             "test_accuracy": 0.7199,
             "generalization_gap": 0.0581
         },
         {
             "max_depth": 6,
+            "cv_mean_accuracy": 0.7334,
+            "cv_std_accuracy": 0.0229,
             "train_accuracy": 0.8021,
             "test_accuracy": 0.7139,
             "generalization_gap": 0.0883
         },
         {
             "max_depth": 7,
+            "cv_mean_accuracy": 0.7409,
+            "cv_std_accuracy": 0.0212,
             "train_accuracy": 0.8195,
             "test_accuracy": 0.7169,
             "generalization_gap": 0.1026
         },
         {
             "max_depth": 8,
+            "cv_mean_accuracy": 0.7379,
+            "cv_std_accuracy": 0.0282,
             "train_accuracy": 0.821,
             "test_accuracy": 0.7139,
             "generalization_gap": 0.1071
@@ -106,23 +108,23 @@
     ],
     "top_features": [
         {
-            "feature": "Automotive Electrical and Electronics",
+            "feature": "Điện - Điện tử ô tô",
             "importance": 0.44460455063881227
         },
         {
-            "feature": "Materials Science",
+            "feature": "Vật liệu học",
             "importance": 0.24850256972463317
         },
         {
-            "feature": "English 2",
+            "feature": "Tiếng Anh 2",
             "importance": 0.21974474993266982
         },
         {
-            "feature": "Engineering Thermodynamics",
+            "feature": "Nhiệt kỹ thuật",
             "importance": 0.06691239168212003
         },
         {
-            "feature": "English 1",
+            "feature": "Tiếng Anh 1",
             "importance": 0.02023573802176464
         },
         {
@@ -130,7 +132,7 @@
             "importance": 0.0
         },
         {
-            "feature": "Theoretical Mechanics",
+            "feature": "Cơ lý thuyết",
             "importance": 0.0
         },
         {
@@ -142,6 +144,16 @@
         "total_errors": 95,
         "error_rate": 28.61,
         "false_positives": 34,
-        "false_negatives": 61
+        "false_negatives": 61,
+        "fp_gpa_mean": 2.306,
+        "fp_gpa_median": 2.388,
+        "fp_near_threshold": 24,
+        "fp_near_pct": 70.59,
+        "fn_gpa_mean": 2.643,
+        "fn_gpa_median": 2.595,
+        "fn_near_threshold": 46,
+        "fn_near_pct": 75.41,
+        "total_near_threshold": 70,
+        "near_threshold_pct": 73.68
     }
 }
