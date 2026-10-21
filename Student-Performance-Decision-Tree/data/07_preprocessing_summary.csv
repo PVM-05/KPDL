@@ -1,0 +1,11 @@
+﻿Stage,Measure,Value,Notes
+Input,Input grade records,122421,Course-grade rows in the private extracted grade table.
+Input,Input students,3098,Distinct student identifiers in the private extracted grade table.
+Input,Distinct source course labels,155,Distinct source labels before programmatic harmonization.
+Mapping,Mapped source labels,150,Source labels assigned to common harmonized fields.
+Mapping,Source labels retained unchanged,5,Unmatched labels were retained rather than removed.
+Mapping,Mapped grade records,116256,Grade rows covered by the reviewed mapping.
+Mapping,Grade records retained under original labels,6165,Unmatched grade rows retained rather than deleted.
+Output,Harmonized student-course records,103045,Rows after equivalent records were combined by student and field.
+Output,Student rows in intermediate pivot table,3098,Student rows before the later private administrative merge and screening.
+Output,Course or course-group fields in intermediate pivot table,51,Excludes the StudentID column.

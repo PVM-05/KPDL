@@ -1,0 +1,147 @@
+{
+    "dataset_name": "Hồ sơ học tập sinh viên đại học — Đại học Công nghiệp Hà Nội (HaUI)",
+    "summary": {
+        "n_students": 1656,
+        "n_features": 56,
+        "gpa_mean": 2.399168921771278,
+        "gpa_std": 0.50958905543145,
+        "gpa_median": 2.4850277927201003,
+        "gpa_min": 0.0,
+        "gpa_max": 3.480769230769231,
+        "birthplace_count": 27,
+        "male_count": 1652,
+        "female_count": 4
+    },
+    "scenario_early_decision_tree": {
+        "accuracy": 0.713855421686747,
+        "precision_pass": 0.7424242424242424,
+        "recall_pass": 0.6163522012578616,
+        "f1_pass": 0.6735395189003437,
+        "precision_fail": 0.695,
+        "recall_fail": 0.8034682080924855,
+        "f1_fail": 0.7453083109919572,
+        "macro_f1": 0.7094239149461504,
+        "tn": 139,
+        "fp": 34,
+        "fn": 61,
+        "tp": 98
+    },
+    "scenario_early_logistic_regression": {
+        "accuracy": 0.7831325301204819,
+        "precision_pass": 0.8085106382978723,
+        "recall_pass": 0.7169811320754716,
+        "f1_pass": 0.76,
+        "precision_fail": 0.7643979057591623,
+        "recall_fail": 0.8439306358381503,
+        "f1_fail": 0.8021978021978022,
+        "macro_f1": 0.7810989010989011,
+        "tn": 146,
+        "fp": 27,
+        "fn": 45,
+        "tp": 114
+    },
+    "scenario_full_decision_tree": {
+        "accuracy": 0.8433734939759037,
+        "precision_pass": 0.928,
+        "recall_pass": 0.7295597484276729,
+        "f1_pass": 0.8169014084507042,
+        "precision_fail": 0.7922705314009661,
+        "recall_fail": 0.9479768786127167,
+        "f1_fail": 0.8631578947368421,
+        "macro_f1": 0.8400296515937732,
+        "tn": 164,
+        "fp": 9,
+        "fn": 43,
+        "tp": 116
+    },
+    "depth_tuning": [
+        {
+            "max_depth": 1,
+            "train_accuracy": 0.6669,
+            "test_accuracy": 0.6867,
+            "generalization_gap": -0.0198
+        },
+        {
+            "max_depth": 2,
+            "train_accuracy": 0.6858,
+            "test_accuracy": 0.6867,
+            "generalization_gap": -0.0009
+        },
+        {
+            "max_depth": 3,
+            "train_accuracy": 0.7492,
+            "test_accuracy": 0.7139,
+            "generalization_gap": 0.0354
+        },
+        {
+            "max_depth": 4,
+            "train_accuracy": 0.7613,
+            "test_accuracy": 0.744,
+            "generalization_gap": 0.0174
+        },
+        {
+            "max_depth": 5,
+            "train_accuracy": 0.7779,
+            "test_accuracy": 0.7199,
+            "generalization_gap": 0.0581
+        },
+        {
+            "max_depth": 6,
+            "train_accuracy": 0.8021,
+            "test_accuracy": 0.7139,
+            "generalization_gap": 0.0883
+        },
+        {
+            "max_depth": 7,
+            "train_accuracy": 0.8195,
+            "test_accuracy": 0.7169,
+            "generalization_gap": 0.1026
+        },
+        {
+            "max_depth": 8,
+            "train_accuracy": 0.821,
+            "test_accuracy": 0.7139,
+            "generalization_gap": 0.1071
+        }
+    ],
+    "top_features": [
+        {
+            "feature": "Automotive Electrical and Electronics",
+            "importance": 0.44460455063881227
+        },
+        {
+            "feature": "Materials Science",
+            "importance": 0.24850256972463317
+        },
+        {
+            "feature": "English 2",
+            "importance": 0.21974474993266982
+        },
+        {
+            "feature": "Engineering Thermodynamics",
+            "importance": 0.06691239168212003
+        },
+        {
+            "feature": "English 1",
+            "importance": 0.02023573802176464
+        },
+        {
+            "feature": "National Defense and Security Education",
+            "importance": 0.0
+        },
+        {
+            "feature": "Theoretical Mechanics",
+            "importance": 0.0
+        },
+        {
+            "feature": "Physics 1",
+            "importance": 0.0
+        }
+    ],
+    "error_analysis": {
+        "total_errors": 95,
+        "error_rate": 28.61,
+        "false_positives": 34,
+        "false_negatives": 61
+    }
+}
